@@ -1,10 +1,7 @@
 #!/bin/bash
-ssh pi@192.168.0.2 <<'EOF'
+current=2
+while [ $current -le 4 ]; do
+ssh pi@192.168.0.$current <<EOF
 sudo shutdown now
 EOF
-ssh pi@192.168.0.3 <<'EOF2'
-sudo shutdown now
-EOF2
-ssh pi@192.168.0.4 <<'EOF3'
-sudo shutdown now
-EOF3
+done
