@@ -1,44 +1,60 @@
 import socket               # Import socket module
 import testFile
 import os, sys
+import subprocess
 
-#s = socket.socket()         # Create a socket object
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#host = socket.gethostname() # Get local machine name
-host = ""
-port = 12345                 # Reserve a port for your service.
-s.bind((host, port))        # Bind to the port
-space = " ".encode()
-s.listen(5)                 # Now wait for client connection.
-while True:
-    c, addr = s.accept()     # Establish connection with client.
-    print('Got connection from', addr)
-    #os.system("sudo killall hd-idle")
-    #os.system("sudo mount /dev/sda1 /media/pi/")
-    print("Mounted hard drive")
-    print("Receiving...")
-    firstData = c.recv(1024)
-    fileName = firstData[:firstData.find(space)]
-    fileName = "/media/pi/" + fileName.decode()
-    print(fileName)
-    #f = open(fileName,'wb')
-    totalSize = 0
-    if len(firstData) > firstData.find(space)+1:
-        totalSize += len(firstData) - firstData.find(space) - 1
-    #    f.write(firstData[firstData.find(space)+1:])
-    l = c.recv(1024)
-    while (l):
-        print("Receiving....")
-        #f.write(l)
-        totalSize += len(l)
+def receiveLoop():
+    #s = socket.socket()         # Create a socket object
+    killString = ("sudo killall hd-idle").split()
+    runString = ("sudo ~/hd-idle/hd-idle -i 10").split()
+    mountString = ("sudo mount /dev/sda1 /media/pi/").split()
+    umountString = ("sudo umount /dev/sda1").split()
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #host = socket.gethostname() # Get local machine name
+    host = ""
+    port = 12345                 # Reserve a port for your service.
+    s.bind((host, port))        # Bind to the port
+    space = " ".encode()
+    s.listen(5)                 # Now wait for client connection.
+    capacityAvailable = 0
+    while True:
+        c, addr = s.accept()     # Establish connection with client.
+        print('Got connection from', addr)
+        call = subprocess.Popen(killString,stdout=subprocess.PIPE)
+        call.communicate()
+        call = subprocess.Popen(mountString,stdout=subprocess.PIPE)
+        call.communicate()
+        print("Mounted hard drive")
+        print("Receiving...")
+        firstData = c.recv(1024)
+        fileName = firstData[:firstData.find(space)]
+        fileName = "/media/pi/" + fileName.decode()
+        f = open(fileName,'wb')
+        totalSize = 0
+        if len(firstData) > firstData.find(space)+1:
+            totalSize += len(firstData) - firstData.find(space) - 1
+        f.write(firstData[firstData.find(space)+1:])
         l = c.recv(1024)
-    #f.close()
-    print("Done Receiving")
-    #checksum = testFile.md5sum(fileName)
-    checksum = "hi"
-    c.send(checksum.encode())
-    c.close()
-    print(totalSize)
-    break
-#os.system("sudo umount /dev/sda1")
-#os.system("sudo ~/hd-idle/hd-idle -i 10")
+        while (l):
+            print("Receiving....")
+            f.write(l)
+            totalSize += len(l)
+            l = c.recv(1024)
+        f.close()
+        print("Done Receiving")
+        capacityAvailable = getCapacity()
+        checksum = testFile.md5sum(fileName)
+        c.send(checksum.encode() + " " + str(capacityAvailable))
+        c.close()
+        print(totalSize)
+        call = subprocess.Popen(killString,stdout=subprocess.PIPE)
+        call.communicate()
+        call = subprocess.Popen(mountString,stdout=subprocess.PIPE)
+        call.communicate()
+
+def getCapacity():
+    sysfs = os.statvfs("/media/pi/")
+    cap = sysfs.f_bsize * sysfs.f_bavail
+    return cap
+
+receiveLoop()

@@ -1,6 +1,6 @@
 import os, sys
 
 sysfs = os.statvfs(sys.argv[1])
-cap = sysfs.f_bsize * sysfs.f_avail
+cap = sysfs.f_bsize * sysfs.f_bavail
 
-return "startcapacity" + str(cap) + "endcapacity"
+print("startcapacity" + str(cap) + "endcapacity")

@@ -22,6 +22,8 @@ def getNewNode():
 	newNode = {"ip": nextIP}
 	nodeCapacity = setupNewNode(nextIP)
 	newNode["capacity"] = nodeCapacity
+	listNodes.append(newNode)
+	print(nodeCapacity)
 
 def setupNewNode(ip):
 	nextNode = "./setupOneNoede.sh " + ip
@@ -30,12 +32,12 @@ def setupNewNode(ip):
 	rv = rv[rv.find("startcapacity")+13:rv.find("endcapacity")]
 	return int(rv)
 
-
 def setupCluster():
 	#os.system("./setup.sh")
 	os.system("./uploadFiles.sh")
 
 def main():
+	setupCluster()
 	getNewNode()
 
 main()
