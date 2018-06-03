@@ -16,6 +16,7 @@ def main():
 		raise SystemExit(1)
 	print(md5sum(sys.argv[1]))
 
+#main()
 #os.system("./test.sh a b")
 #os.system("ls")
 #print("hello")

@@ -2,6 +2,7 @@ import socket               # Import socket module
 import testFile
 import os, sys
 import subprocess
+import time
 
 def receiveLoop():
     #s = socket.socket()         # Create a socket object
@@ -20,8 +21,8 @@ def receiveLoop():
     while True:
         c, addr = s.accept()     # Establish connection with client.
         print('Got connection from', addr)
-        call = subprocess.Popen(killString,stdout=subprocess.PIPE)
-        call.communicate()
+        #call = subprocess.Popen(killString,stdout=subprocess.PIPE)
+        #call.communicate()
         call = subprocess.Popen(mountString,stdout=subprocess.PIPE)
         call.communicate()
         print("Mounted hard drive")
@@ -44,13 +45,15 @@ def receiveLoop():
         print("Done Receiving")
         capacityAvailable = getCapacity()
         checksum = testFile.md5sum(fileName)
-        c.send(checksum.encode() + " " + str(capacityAvailable))
+        c.send((checksum + " " + str(capacityAvailable)).encode())
         c.close()
         print(totalSize)
-        call = subprocess.Popen(killString,stdout=subprocess.PIPE)
+        time.sleep(1)
+        #call = subprocess.Popen(runString,stdout=subprocess.PIPE)
+        #call.communicate()
+        call = subprocess.Popen(umountString,stdout=subprocess.PIPE)
         call.communicate()
-        call = subprocess.Popen(mountString,stdout=subprocess.PIPE)
-        call.communicate()
+        break
 
 def getCapacity():
     sysfs = os.statvfs("/media/pi/")

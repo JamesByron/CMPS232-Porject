@@ -1,5 +1,4 @@
 #!/bin/bash
-sleep 1
 ssh pi@$1 <<EOF
 sudo mount /dev/sda1 /media/pi/
 cd DataArchiver
