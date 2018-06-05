@@ -9,7 +9,7 @@ def sendOneFile(ip, location, fileName):
 	host = ip
 	port = 12345                # Reserve a port for your service.
 	s.connect((host, port))
-	fn = fileName + " "
+	fn = fileName + "  "
 	s.send(fn.encode())
 	f = open(location+fileName,'rb')
 	print('Sending...')

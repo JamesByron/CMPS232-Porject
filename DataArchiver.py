@@ -39,13 +39,22 @@ def setupCluster():
 	pass
 
 def getFiles(location):
-	call = subprocess.Popen(("ls -l " + location).split(),stdout=subprocess.PIPE)
+	call = subprocess.Popen(["ls","-l",location],stdout=subprocess.PIPE)
 	rv = call.communicate()[0].decode().split("\n")
 	firstList = [f.split() for f in rv]
 	returnList = []
 	for each in firstList:
 		if len(each) > 2:
-			returnList.append({"size": int(each[4]),"location": location,"name": each[8]}) if int(each[4]) > 0 else None
+			n = each[8]
+			if len(each) > 9:
+				for s in each[9:]:
+					n+=" "+s
+			if each[0][0] == "-":
+				print("return 1")
+				returnList.append({"size": int(each[4]),"location": location,"name": n.replace("\'","")})
+			elif each[0][0] == "d":
+				print("return 2")
+				returnList += getFiles(location+n.replace("\'","")+"/")
 	return returnList
 
 def storeFiles(files):
@@ -66,8 +75,9 @@ def main():
 	setupCluster()
 	#getNewNode()
 	originDirectory = "/media/james/Sandisk/"
-	#originDirectory = "/home/james/ds/"
+	#originDirectory = "/home/james/ds/"y
 	fileList = getFiles(originDirectory)
-	storeFiles(fileList)
+	print(fileList)
+	#storeFiles(fileList)
 
 main()

@@ -1,10 +1,11 @@
 #!/bin/bash
 current=2
-while [ $current -le 4 ]; do
+scp *.py pi@192.168.0.$current:DataArchiver/
+while [ $current -le 2 ]; do
 ssh pi@192.168.0.$current <<EOF
-rm DataArchiver/* -f
+cd DataArchiver
+python3 receiveFile.py &
 exit
 EOF
-scp *.py pi@192.168.0.$current:DataArchiver/
 let current=$current+1
 done

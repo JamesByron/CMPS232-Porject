@@ -15,7 +15,7 @@ def receiveLoop():
     host = ""
     port = 12345                 # Reserve a port for your service.
     s.bind((host, port))        # Bind to the port
-    space = " ".encode()
+    space = "  ".encode()
     s.listen(5)                 # Now wait for client connection.
     capacityAvailable = 0
     while True:
@@ -53,7 +53,7 @@ def receiveLoop():
         #call.communicate()
         call = subprocess.Popen(umountString,stdout=subprocess.PIPE)
         call.communicate()
-        break
+        
 
 def getCapacity():
     sysfs = os.statvfs("/media/pi/")
