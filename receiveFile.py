@@ -58,7 +58,6 @@ def receiveLoop():
         #call.communicate()
         call = subprocess.Popen(umountString,stdout=subprocess.PIPE)
         call.communicate()
-        break
     s.close()
         
 

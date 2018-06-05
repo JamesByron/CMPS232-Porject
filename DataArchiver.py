@@ -60,17 +60,16 @@ def storeFiles(files):
 			getNewNode()
 		elif files[0]["size"]+4096 < listNodes[index]["capacity"]:
 			aFile = files.pop(0)
-			print(aFile)
 			aFile["node"] = listNodes[index]["ip"]
 			h, newCap = sendFile.sendOneFile(listNodes[index]["ip"], aFile["location"], aFile["name"])
 			aFile["hash"] = h
-			listNodes[index]["capacity"] = newCap
-			exit()
+			listNodes[index]["capacity"] = int(newCap)
+			#exit()
 		else:
 			index += 1
 
 def main():
-	#setupCluster()
+	setupCluster()
 	#getNewNode()
 	originDirectory = "/media/james/Sandisk/"
 	#originDirectory = "/home/james/ds/"y
