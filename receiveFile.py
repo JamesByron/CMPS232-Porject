@@ -35,9 +35,9 @@ def receiveLoop():
         fileName = "/media/pi/" + fileName.decode()
         f = open(fileName,'wb')
         totalSize = 0
-        if len(firstData) > firstData.find(space)+1:
-            totalSize += len(firstData) - firstData.find(space) - 1
-        f.write(firstData[firstData.find(space)+1:])
+        if len(firstData) > firstData.find(space)+2:
+            totalSize += len(firstData) - firstData.find(space) - 2
+        f.write(firstData[firstData.find(space)+2:])
         l = c.recv(1024)
         while (l):
             f.write(l)
