@@ -1,5 +1,5 @@
 #!/bin/bash
-ssh pi@$1 <<EOF
+ssh pi@$1 -tt <<EOF
 sudo mount /dev/sda1 /media/pi/
 cd DataArchiver
 python3 getCapacity.py /media/pi/

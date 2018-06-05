@@ -1,8 +1,8 @@
 #!/bin/bash
 current=2
+while [ $current -le 4 ]; do
 scp *.py pi@192.168.0.$current:DataArchiver/
-while [ $current -le 2 ]; do
-ssh pi@192.168.0.$current <<EOF
+ssh pi@192.168.0.$current -tt <<EOF
 cd DataArchiver
 python3 receiveFile.py &
 exit

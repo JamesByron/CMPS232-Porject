@@ -24,7 +24,6 @@ def getNewNode():
 	nodeCapacity = setupNewNode(nextIP)
 	newNode["capacity"] = nodeCapacity
 	listNodes.append(newNode)
-	print(nodeCapacity)
 
 def setupNewNode(ip):
 	nextNode = "./setupOneNode.sh " + ip
@@ -34,9 +33,7 @@ def setupNewNode(ip):
 	return int(rv)
 
 def setupCluster():
-	#os.system("./setup.sh")
-	#os.system("./uploadFiles.sh")
-	pass
+	os.system("./setup.sh")
 
 def getFiles(location):
 	call = subprocess.Popen(["ls","-l",location],stdout=subprocess.PIPE)
@@ -49,16 +46,13 @@ def getFiles(location):
 			if len(each) > 9:
 				for s in each[9:]:
 					n+=" "+s
-			if each[0][0] == "-":
-				print("return 1")
+			if each[0][0] == "-" and int(each[4]) > 0:
 				returnList.append({"size": int(each[4]),"location": location,"name": n.replace("\'","")})
 			elif each[0][0] == "d":
-				print("return 2")
 				returnList += getFiles(location+n.replace("\'","")+"/")
 	return returnList
 
 def storeFiles(files):
-	#print(files)
 	while len(files) > 0:
 		index = 0
 		if index == len(listNodes):
@@ -66,18 +60,22 @@ def storeFiles(files):
 			getNewNode()
 		elif files[0]["size"]+4096 < listNodes[index]["capacity"]:
 			aFile = files.pop(0)
-			newCap = sendFile.sendOneFile(listNodes[index]["ip"], aFile["location"], aFile["name"])
+			print(aFile)
+			aFile["node"] = listNodes[index]["ip"]
+			h, newCap = sendFile.sendOneFile(listNodes[index]["ip"], aFile["location"], aFile["name"])
+			aFile["hash"] = h
 			listNodes[index]["capacity"] = newCap
+			exit()
 		else:
 			index += 1
 
 def main():
-	setupCluster()
+	#setupCluster()
 	#getNewNode()
 	originDirectory = "/media/james/Sandisk/"
 	#originDirectory = "/home/james/ds/"y
 	fileList = getFiles(originDirectory)
-	print(fileList)
-	#storeFiles(fileList)
+	#print(fileList)
+	storeFiles(fileList)
 
 main()
