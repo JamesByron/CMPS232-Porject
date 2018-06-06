@@ -1,5 +1,6 @@
 import os, sys
 import subprocess
+import fileinput
 import time
 import sendFile
 
@@ -69,12 +70,27 @@ def storeFiles(files):
 			index += 1
 
 def main():
-	setupCluster()
-	#getNewNode()
-	originDirectory = "/media/james/Sandisk/"
-	#originDirectory = "/home/james/ds/"y
-	fileList = getFiles(originDirectory)
-	#print(fileList)
-	storeFiles(fileList)
+	i = input("Type new command:\nQuit: q\nRetrieve files: r\nSetup all nodes: s\nArchive files: a\nReset nodes: d")
+	if i.strip() == "q" or i.strip() == "Q":
+		exit()
+	elif i.strip() == "r" or i.strip() == "R":
+		while True
+			x = input("Enter file name to retrieve or \"quit\" when finished. ")
+			if x.strip() == "quit":
+				break
+	elif i.strip() == "s" or i.strip() == "S":
+		setupCluster()
+	elif i.strip() == "a" or i.strip() == "A":
+		x = input("Directory with files to archive is /media/james/Sandisk/. Type full path to change or press enter to use default.")
+		if x == "":
+			originDirectory = "/media/james/Sandisk/"
+		else:
+			originDirectory = x
+		fileList = getFiles(originDirectory)
+		print(len(fileList),"files found.")
+		storeFiles(fileList)
+	elif i.strip() == "d" or i.strip() == "D":
+		pass
+	#need to finish d r 
 
 main()
