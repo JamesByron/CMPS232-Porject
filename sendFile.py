@@ -2,16 +2,16 @@ import socket               # Import socket module
 import testFile
 import sys
 
-def sendOneFile(ip, location, fileName):
+def sendOneFile(ip, location, fileName, transmitName):
 	repeats = 0
 	while repeats < 5:
 		#s = socket.socket()         # Create a socket object
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		#host = socket.gethostname() # Get local machine name
 		host = ip
-		port = 12345                # Reserve a port for your service.
+		port = 12345
 		s.connect((host, port))
-		fn = fileName + "  "
+		fn = transmitName + "  "
 		s.send(fn.encode())
 		f = open(location+fileName,'rb')
 		print('Sending', fileName)
@@ -28,3 +28,5 @@ def sendOneFile(ip, location, fileName):
 		else:
 			print("Error sending ",fileName)
 			repeats += 1
+
+#sendOneFile("192.168.0.2", "/media/james/Sandisk/", "VBox.log", "1")
