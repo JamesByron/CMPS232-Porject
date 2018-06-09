@@ -7,7 +7,6 @@ sudo killall hd-idle
 sudo hd-idle/hd-idle -i 10
 sudo mount /dev/sda1 /media/pi/
 cd DataArchiver
-sudo chmod +x runReceive.sh
 python3 getCapacity.py /media/pi/
 sudo umount /dev/sda1
 exit

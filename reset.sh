@@ -9,3 +9,4 @@ sudo umount /dev/sda1
 rm ~/DataArchiver/*
 exit
 EOF
+rm receive_log_master

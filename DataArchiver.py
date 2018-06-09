@@ -6,18 +6,14 @@ import sendFile
 
 #sysfs = os.statvfs("/media/pi/")
 listNodes = []
-filesStored = {}
 maxNodes = 3
 fileSequence = 1
 totalDataSent = 0
-receiveLogFile = open("receive_log","a")
-verifyLogFile = open("verify_log","a")
 filesDiretory = "/"
 
 def getNewNode():
 	assert(len(listNodes) < maxNodes)
 	nextIP = "192.168.0." + str(2+len(listNodes))
-	receiveLogFile.write("Adding_node "+nextIP+"\n")
 	nextNode = "ping -W 1 -c 1 " + nextIP
 	call = subprocess.Popen(nextNode.split(),stdout=subprocess.PIPE)
 	returnValue = call.communicate()[0].decode()
@@ -27,11 +23,11 @@ def getNewNode():
 		time.sleep(5)
 		returnValue = call.communicate()[0].decode()
 	print("Found new node:",nextIP)
-	newNode = {"ip": nextIP}
+	newNode = {"ip":nextIP, "Active":True}
+	#nodeCapacity = 100000000000
 	nodeCapacity = setupNewNode(nextIP)
 	newNode["capacity"] = nodeCapacity
 	listNodes.append(newNode)
-	receiveLogFile.write("New_Node_Capacity "+str(nodeCapacity)+"\n")
 
 def setupNewNode(ip):
 	nextNode = "./setupOneNode.sh " + ip
@@ -40,8 +36,11 @@ def setupNewNode(ip):
 	rv = rv[rv.find("startcapacity")+13:rv.find("endcapacity")]
 	nextNode = "./runRemote.sh " + ip
 	call = subprocess.Popen(nextNode.split(),stdout=subprocess.PIPE)
-	call.communicate()
+	x = call.communicate()[0].decode()
+	#print(x)
 	time.sleep(3)
+	#print("rv", rv)
+	#rv = 1000000000
 	return int(rv)
 
 def getFiles(location):
@@ -50,7 +49,7 @@ def getFiles(location):
 	firstList = [f.split() for f in rv]
 	returnList = []
 	for each in firstList:
-		if len(each) > 2:
+		if len(each) > 2 and len(each) < 10:
 			n = each[8]
 			if len(each) > 9:
 				for s in each[9:]:
@@ -65,39 +64,52 @@ def storeFiles(files):
 	global fileSequence
 	global maxNodes
 	global totalDataSent
-	global receiveLogFile
 	global filesDiretory
+	receiveLogFile = open("receive_log_master","a")
+	receiveLogFile.write("Storing_file\tStoring_file_size\tStoring_file_index\tStoring_into_node\tFile_transfer_time\tBytes_per_second\tTotal_time_taken\tTotal_data_archived\tNode_capacity\n")
 	index = 0
 	startTime = time.time()
 	while len(files) > 0 and index < maxNodes:
 		if index == len(listNodes):
 			print("Out of capacity. Need to add more nodes.")
 			getNewNode()
-		elif files[0]["size"]+4096 < listNodes[index]["capacity"]:
-			receiveLogFile.write("Storing_file "+files[0]["name"]+"\n")
-			receiveLogFile.write("Storing_file_size "+str(files[0]["size"])+"\n")
-			receiveLogFile.write("Storing_file_index "+str(fileSequence)+"\n")
-			receiveLogFile.write("Storing_into_node "+str(index+1)+"\n")
-			fileStartTime = time.time()
+			time.sleep(2)
+		elif files[0]["size"]+100000000 < listNodes[index]["capacity"]:
+			receiveLogFile.write(files[0]["name"]+"\t")
+			receiveLogFile.write(str(files[0]["size"])+"\t")
+			receiveLogFile.write(str(fileSequence)+"\t")
+			receiveLogFile.write(str(index+1)+"\t")
 			aFile = files.pop(0)
 			aFile["node"] = listNodes[index]["ip"]
-			h, newCap = sendFile.sendOneFile(listNodes[index]["ip"], aFile["location"], aFile["name"],str(fileSequence))
+			h, newCap, tToken = sendFile.sendOneFile(listNodes[index]["ip"], aFile["location"], aFile["name"],str(fileSequence),False)
 			print("newCap ",newCap)
 			aFile["hash"] = h
 			#newCap = 0
 			listNodes[index]["capacity"] = int(newCap)
 			fileSequence += 1
-			totalDataSent += files[0]["size"]
-			receiveLogFile.write("File_transfer_time "+str(time.time()-fileStartTime)+"\n")
-			receiveLogFile.write("Bytes_per_second "+str(files[0]["size"]/(time.time()-fileStartTime))+"\n")
-			receiveLogFile.write("Total_transfer_time_taken "+str(time.time()-startTime)+"\n")
-			receiveLogFile.write("Total_data_archived "+str(totalDataSent)+"\n")
+			totalDataSent += aFile["size"]
+			receiveLogFile.write(str(tToken)+"\t")
+			stringToWrite = str(aFile["size"]/tToken) if tToken > 0 else "0"
+			receiveLogFile.write(stringToWrite+"\t")
+			receiveLogFile.write(str(time.time()-startTime)+"\t")
+			receiveLogFile.write(str(totalDataSent)+"\t")
+			receiveLogFile.write(str(newCap)+"\n")
+		elif listNodes[index]["capacity"] == -1:
+			h, newCap, tToken = sendFile.sendOneFile(listNodes[index]["ip"], "end", "end","end",True)
+			time.sleep(5)
+			nextNode = "./restart.sh " + listNodes[index]["ip"]
+			call = subprocess.Popen(nextNode.split(),stdout=subprocess.PIPE)
+			call.communicate()
+			listNodes.pop(index)
+			time.sleep(30)
+			getNewNode()
+			time.sleep(3)
 		else:
+			h, newCap, tToken = sendFile.sendOneFile(listNodes[index]["ip"], "end", "end","end",True)
 			index += 1
 		if len(files) == 0:
 			files = getFiles(filesDiretory)
 	receiveLogFile.write("Done_Archiving_Data\n\n")
-	receiveLogFile.flush()
 
 def resetCluster():
 	ipValue = 2
@@ -117,6 +129,7 @@ def resetCluster():
 		ipValue += 1
 
 def verifyCluster():
+	verifyLogFile = open("verify_log_master","a")
 	ipValue = 2
 	startTime = time.time()
 	verifyLogFile.write("Starting_verifyCluster "+str(startTime)+"\n")
@@ -134,14 +147,13 @@ def verifyCluster():
 		call = subprocess.Popen(nextNode.split(),stdout=subprocess.PIPE)
 		call.communicate()
 		ipValue += 1
+	verifyLogFile.close()
 
 def main():
 	global filesDiretory
 	while True:
 		i = input("Type new command:\nQuit: q\nVerify files: v\nShutdown nodes: s\nArchive files: a\nReset nodes: r\nUpload files: u\n")
 		if i.strip() == "q" or i.strip() == "Q":
-			verifyLogFile.close()
-			receiveLogFile.close()
 			exit()
 		elif i.strip() == "r" or i.strip() == "R":
 			resetCluster()
@@ -155,7 +167,6 @@ def main():
 				originDirectory = x
 			filesDiretory = originDirectory
 			fileList = getFiles(originDirectory)
-			print(len(fileList),"files found.")
 			storeFiles(fileList)
 		elif i.strip() == "v" or i.strip() == "V":
 			verifyCluster()
