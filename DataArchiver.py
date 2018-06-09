@@ -74,7 +74,7 @@ def storeFiles(files):
 			print("Out of capacity. Need to add more nodes.")
 			getNewNode()
 			time.sleep(2)
-		elif files[0]["size"]+100000000 < listNodes[index]["capacity"]:
+		elif files[0]["size"]+10000000 < listNodes[index]["capacity"]:
 			receiveLogFile.write(files[0]["name"]+"\t")
 			receiveLogFile.write(str(files[0]["size"])+"\t")
 			receiveLogFile.write(str(fileSequence)+"\t")
@@ -95,6 +95,7 @@ def storeFiles(files):
 			receiveLogFile.write(str(totalDataSent)+"\t")
 			receiveLogFile.write(str(newCap)+"\n")
 		elif listNodes[index]["capacity"] == -1:
+			print("Rebooting node",index)
 			h, newCap, tToken = sendFile.sendOneFile(listNodes[index]["ip"], "end", "end","end",True)
 			time.sleep(5)
 			nextNode = "./restart.sh " + listNodes[index]["ip"]
@@ -103,7 +104,7 @@ def storeFiles(files):
 			listNodes.pop(index)
 			time.sleep(30)
 			getNewNode()
-			time.sleep(3)
+			time.sleep(30)
 		else:
 			h, newCap, tToken = sendFile.sendOneFile(listNodes[index]["ip"], "end", "end","end",True)
 			index += 1
