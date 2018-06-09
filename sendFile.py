@@ -38,10 +38,11 @@ def sendOneFile(ip, location, fileName, transmitName, theEnd):
 			f.close()
 			endTime = time.time()
 			s.shutdown(socket.SHUT_WR)
+			localChecksum = testFile.md5sum(location+fileName)
 			print("Awaiting checksum...")
 			md5_cap = s.recv(4096).decode().split()
 			s.close
-			if (testFile.md5sum(location+fileName) == md5_cap[0]):
+			if (localChecksum == md5_cap[0]):
 				return(md5_cap[0], md5_cap[1], endTime-startTime)
 			else:
 				print("Error sending ",fileName)
