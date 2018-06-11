@@ -133,27 +133,35 @@ def verifyFiles():
     global fileList
     global fileNames
     logFile = open("verify_log","a")
-    logFile.write("Start_verifying\tFile_corrupted\tFile_name\tNumber_files_verified\tTotal_corrupted_files\tTime_to_verify\n")
+    logFile.write("Start_verifying\tFile_corrupted\tFile_name\tFile_size\tNumber_files_verified\tTotal_corrupted_files\tTotal_time\tTime_to_verify\n")
     corruptedFiles = 0
     startTime = time.time()
     mountString = ("sudo mount /dev/sda1 /media/pi/").split()
     umountString = ("sudo umount /dev/sda1").split()
     call = subprocess.Popen(mountString,stdout=subprocess.PIPE)
     call.communicate()
+    fileNumber = 0
     for each in fileList:
-        aList = each.strip().split("  ")
-        checksum = testFile.md5sum(aList[0])
-        result = checksum == aList[1]
-        logFile.write(str(startTime)+"\t")
-        if not result:
-            logFile.write("Yes\t")
-            corruptedFiles += 1
-        else:
-            logFile.write("No\t")
-        logFile.write(aList[0]+"\t")
-        logFile.write(str(len(fileList))+"\t")
-        logFile.write(str(corruptedFiles)+"\t")
-        logFile.write(str(time.time()-startTime)+"\t")
+        if "name" in each:
+            fileNumber += 1
+            startTimeFile = time.time()
+            #aList = each #each.strip().split("  ")
+            checksum = testFile.md5sum(each["name"])
+            result = checksum == each["hash"]
+            endTimeFile = time.time()
+            logFile.write(str(startTime)+"\t")
+            if not result:
+                logFile.write("Yes\t")
+                corruptedFiles += 1
+            else:
+                logFile.write("No\t")
+            logFile.write(each["name"]+"\t")
+            logFile.write(str(each["size"])+"\t")
+            logFile.write(str(fileNumber)+"\t")
+            logFile.write(str(corruptedFiles)+"\t")
+            logFile.write(str(endTimeFile-startTime)+"\t")
+            logFile.write(str(endTimeFile-startTimeFile)+"\n")
+            print(fileNumber)
     call = subprocess.Popen(umountString,stdout=subprocess.PIPE)
     call.communicate()
     logFile.close()
