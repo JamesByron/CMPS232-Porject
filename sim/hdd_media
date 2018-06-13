@@ -1,0 +1,24 @@
+[hdd_media]
+Name = "hdd_media"
+Revision = 0
+Match_Key_List = ["hdd_drive","hdd_library_a"]
+Cost_Each = 0
+Cost_Growth = 0
+Power_Consumption_Idle = 0
+Media_Per_Drive = 1
+Volume = "0.03*0.1*0.1"
+Lifespan = 5
+Write_Endurance = 0
+Read_Endurance = 0
+Failure_Probability = 0
+Failure_Probability_Growth = 1.0
+Byte_Failure_Rate = "1/99999"
+First_Byte_Latency = 5
+Capacity = 232000
+Capacity_Growth = 2
+Bandwidth_Write = 0
+Bandwidth_Read = 0
+Bandwidth_Write_Growth = 1.0
+Bandwidth_Read_Growth = 1.0
+IOPS = 0
+IOPS_Growth = 1

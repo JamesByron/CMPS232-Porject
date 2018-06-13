@@ -127,7 +127,26 @@ We measure the amount of data transmitted, time taken, and total data stored on 
 \subsection{Simulator Setup}
 We configure our simulator to simulate the use of 250GB, 500GB, and 1TB hard drives in order to increase capacity.  The simulator uses one of each type of hard drive to simulate the effect of adding capacity with larger hard drives over time.  We consider the total active taken in the simulator and compare it with our observed active time.  As with our experiments, the simulator will record the active time to write all data into the storage system and also to verify or scrub the data once.
 
+We configure the simulator to use parameters that reflect the behavior of the Raspberry Pis and hard drives.  The Raspberry Pi provides USB 2.0 connectivity for each hard drive, and we therefore limit the throughput of each hard drive to 20 MB per second in the simulator.  This performance is significantly less than each HDD’s performance over SATA, and we expect the slower performance to increase total power consumption it our simulations.  The throughput also does not grow during the simulations.  We use the typical power consumption of hard drives similar to those in our prototype~\cite{web50,web38}.  We configure the simulator to scrub the data once during the simulation as we do with the prototype.
+
 \section{Experimental Results}
+
+\begin{table*}[!hbt]
+\begin{minipage}{\linewidth}
+\centering
+  \caption{Storage Media Parameters}
+  \label{tab:comp}
+  \begin{tabular}{lr|rr|rr}
+    \toprule
+    \textbf{Sim. Year}&\textbf{Capacity}&\textbf{Sim. Time}&\textbf{Sim. Power (kwh)}&\textbf{Real Time}&\textbf{Real Power}\\
+    \midrule
+    1&250 GB&192 min&0.05 kwh&210 min&0.06 kwh\\
+    2&500 GB&518 min&0.14 kwh&600 min&0.19 kwh\\
+    3&1 TB&1170 min&0.32&1435 min&1.1 kwh\\
+  \bottomrule
+\end{tabular}
+\end{minipage}
+\end{table*}
 
 
 \begin{figure}[!ht]
@@ -147,23 +166,3 @@ We configure our simulator to simulate the use of 250GB, 500GB, and 1TB hard dri
 \caption{Seconds to verify files by file zize}
 \label{fig8}
 \end{figure}
-
-\begin{table}[!hbt]
-\begin{minipage}{\linewidth}
-\centering
-  \caption{Storage Media Parameters}
-  \label{tab:media}
-  \begin{tabular}{l|rr|rr}
-    \toprule
-    &\multicolumn{2}{|c|}{\textbf{Tape~\cite{web25}}}&\multicolumn{2}{|c}{\textbf{Optical Disc~\cite{web22}}}\\
-    \textbf{Item}&\textbf{Value}&\textbf{CAGR}&\textbf{Value}&\textbf{CAGR}\\
-    \midrule
-    Cost&\$175&0\%&\$20.83&0\%\\
-    Capacity&12 TB&32.5\%&300 GB&17.1\%\\
-    Read Endurance&200&-&$\infty$&-\\
-    Write Endurance&200&-&1&-\\
-    Fail Probability&0.011\%&-&-&-\\
-  \bottomrule
-\end{tabular}
-\end{minipage}
-\end{table}

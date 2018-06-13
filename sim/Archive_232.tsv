@@ -1,0 +1,5 @@
+Generation	NumStorageGroups	TotalCapacity	TotalPurchaseCost	TotalPowerUsed	TotalReadBandwidth	TotalWriteBandwidth	TotalIOPS	BestGroupToAddDevices	NumMediaAdded	NumDrivesAdded	TotalCapacityAfterPurchase	TotalCostAfterPurchase	TotalPowerUsedAfterPurchase	TotalReadBWAfterPurchase	TotalWriteBWAfterPurchase	TotalIOPSAfterPurchase
+0	0	0.0	0	0.0	0	0	0	0	1	1	232000.0	250.0	0.005104608708333334	20	20	100
+1	1	232000.0	250.0	0.005104608708333334	20	20	100	0	1	1	696000.0	500.0	0.005104608708333334	40	40	200
+2	1	696000.0	500.0	2.785176675708333	40	40	200	0	1	1	1624000.0	750.0	2.785176675708333	60	60	300
+3	1	1624000.0	750.0	7.421136958958334	60	60	300	0	1	1	3480000.0	1000.0	7.421136958958334	80	80	400

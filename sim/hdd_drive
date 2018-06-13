@@ -1,0 +1,26 @@
+[hdd_drive]
+Name = "hdd_drive"
+Revision = 0
+Match_Key_List = ["hdd_media","hdd_library_a"]
+Cost_Each = 200
+Cost_Growth = 1.0
+Power_Consumption_Idle = 1
+Power_Consumption_Active = 5.14
+Power_Consumption_Standby = 3.33
+Volume = ".02611*.1016*.14699"
+Lifespan = 5
+Failure_Probability = 0
+Failure_Probability_Growth = 1
+Capacity = 0
+Capacity_Growth = 1.0
+Load_Time_Media = 0
+Bandwidth_Write = 20
+Bandwidth_Read = 20
+Bandwidth_Write_Growth = 1
+Bandwidth_Read_Growth = 1
+IOPS = 100
+IOPS_Growth = 1.0
+Write_Endurance = 0
+Read_Endurance = 0
+Generation_Length = 1
+Generation_Compatibility = 1

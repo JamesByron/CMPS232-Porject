@@ -1,0 +1,20 @@
+[archive_settings]
+Name = "archive_settings"
+Revision = 0
+IOPS_Min = 0
+Read_Min = 0
+Write_Min = 0
+IOPS_Min_Growth = 1.0
+Read_Min_Growth = 1.0
+Write_Min_Growth = 1.0
+FirstByte_Max = 30
+Power_Cost = 0.1055
+Power_Cost_Growth = 1.0
+Capacity = 230000
+Capacity_Growth = 2
+Datacenter_Cost = 1
+Seed = "none"
+Sim_Length = 3
+Fraction_Write_Yearly = 0
+Fraction_Read_Yearly = 0
+Scrub_Fraction_Yearly = 0.7

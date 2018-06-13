@@ -1,0 +1,16 @@
+[hdd_library_a]
+Name = "hdd_library_a"
+Revision = 0
+Match_Key_List = []
+Minimum_Number = 1
+Maximum_Ratio = 0
+Cost_Each = 50
+Cost_Growth = 1.0
+Power_Consumption_Active = 10
+Power_Consumption_Standby = 1
+Power_Consumption_Idle = 1
+Media_Each = 1
+Drives_Each = 1
+Drives_Minimum = 0
+Volume = "10*5*8"
+Lifespan = 10
