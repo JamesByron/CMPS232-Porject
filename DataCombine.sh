@@ -15,4 +15,9 @@ sed -e 's/$/\t2/' FileNames_3 | tr -s " " | tr " " "\t" >> FileNames_combined.ts
 sed -e 's/$/\t3/' receive_log_4 | grep -v Got_connection_time >> receive_log_combined.tsv
 sed -e 's/$/\t3/' verify_log_4 | grep -v Start_verifying >> verify_log_combined.tsv
 sed -e 's/$/\t3/' FileNames_4 | tr -s " " | tr " " "\t" >> FileNames_combined.tsv
+rm speed.tsv
+rm busyness.tsv
+rm verify.tsv
 cd ..
+python3 DataProcessing.py
+./charts.sh

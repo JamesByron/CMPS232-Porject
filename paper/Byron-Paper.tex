@@ -1,0 +1,64 @@
+\documentclass[10pt,twocolumn]{article}
+
+% Use the USENIX style file
+\usepackage{usenix}
+
+% Here are a bunch of useful packages
+\usepackage{cite}
+\usepackage{xspace,verbatim}
+\usepackage{subfig}
+\usepackage[hyphens]{url}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+
+% subfig default captions are too small.  This fixes it.
+\captionsetup[subfloat]{font=normalsize}
+
+% Redefine the percentage of the page that can be used for floats (figures,
+% tables, etc.)
+\renewcommand\floatpagefraction{.9}
+\renewcommand\dblfloatpagefraction{.9}
+\renewcommand\topfraction{.9}
+\renewcommand\dbltopfraction{.9}
+\renewcommand\bottomfraction{.9}
+\renewcommand\textfraction{.1}
+\setcounter{totalnumber}{10}
+\setcounter{topnumber}{10}
+\setcounter{dbltopnumber}{10}
+\setcounter{bottomnumber}{10}
+
+% Don't allow widows or clubs - single lines at the start/end of a column
+\widowpenalty=10000
+\clubpenalty=10000
+
+\newcommand{\latex}{\LaTeX\xspace}
+\newcommand{\unix}{\textsc{Unix}\xspace}
+
+\pagestyle{plain}
+
+%------------------------------------------------------------------------- 
+\begin{document}
+
+\title{The Design, Implementatio, and Simulation of Distributed Archival Storage}
+
+\author{
+{\rm James Byron} \\
+\textit{jbyron@ucsc.edu}
+}
+
+\maketitle
+
+\begin{abstract}
+  Text here
+\end{abstract}
+
+\input{body}
+
+%-------------------------------------------------------------------------
+\bibliographystyle{abbrv}
+\bibliography{csrg}
+
+\end{document}

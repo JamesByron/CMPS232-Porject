@@ -1,4 +1,4 @@
-import os, system
+import os, sys
 
 #fileNames = []
 fileSizes = {}
@@ -7,9 +7,10 @@ receiveLogMaster = []
 initialSetupTime = []
 busyness = {}
 speed = {}
+verify = {}
 
 # Destination_file_name	Checksum	Size	Priority	Node
-fileNamesFile = open("data/FileNames_combined","r")
+fileNamesFile = open("data/FileNames_combined.tsv","r")
 firstLine = True
 #1) Chart showing the sizes and number of files as a x-log scale bar chart
 for line in fileNamesFile:
@@ -25,6 +26,7 @@ for line in fileNamesFile:
 fileNamesFile.close()
 
 fileSizesOutput = open("data/FileSizes.tsv","w")
+fileSizesOutput.write("Size\tCount\n")
 for key in sorted(fileSizes.keys()):
 	fileSizesOutput.write(str(key) + "\t" + str(fileSizes[key]) + "\n")
 fileSizesOutput.close()
@@ -43,8 +45,8 @@ receiveLogFile = open("data/receive_log_combined.tsv","r")
 #Node: Node 10
 
 for each in receiveLogFile:
-	if not firstLine:
-		line = each.split()
+	line = each.split()
+	if not firstLine and len(line) > 3:
 		d = {}
 		d["StartLoop"] = float(line[0])
 		d["GotConn"] = float(line[1])
@@ -74,8 +76,8 @@ receiveLogMasterFile = open("data/receive_log_master.tsv","r")
 # Total_data_archived: TotalData 7
 
 for each in receiveLogMasterFile:
-	if not firstLine:
-		line = each.split()
+	line = each.split()
+	if not firstLine and len(line) > 1:
 		d = {}
 		d["Size"] = int(line[1])
 		d["Name"] = line[2]
@@ -96,13 +98,13 @@ for each in receiveLogMasterFile:
 				busyness[d["Size"]] = {"busyT": busyT,"num": 1}
 			else:
 				busyness[d["Size"]]["num"] += 1
-				busyness[d["Size"]]["busyT"] += d["busyT"]
+				busyness[d["Size"]]["busyT"] += busyT
 		# master: BPS vs file size
 		if d["Size"] not in speed:
 			speed[d["Size"]] = {"BPS": d["BPS"], "num": 1}
 		else:
 			speed[d["Size"]]["BPS"] += d["BPS"]
-			speed[d["Size"]]["num"] += d["num"]
+			speed[d["Size"]]["num"] += 1
 		receiveLogMaster.append(d)
 	else:
 		firstLine = False
@@ -112,26 +114,58 @@ receiveLogMasterFile.close()
 # sort busyness by file size, write it out
 newBusyness = {}
 for key in busyness:
-	newBusyness[busyness[key]] = busyness[key]["busyT"] / busyness[key]["num"]
+	newBusyness[key] = busyness[key]["busyT"] / busyness[key]["num"]
 
 newSpeed = {}
 for key in speed:
-	newSpeed[speed[key]] = speed[key]["BPS"] / speed[key]["num"]
+	newSpeed[key] = speed[key]["BPS"] / speed[key]["num"]
 
 busynessFile = open("data/busyness.tsv","w")
+busynessFile.write("Size\tTransferToTotalTime\n")
 for key in sorted(newBusyness.keys()):
-	busynessFile.write(str(key) + "\t" + str(newBusyness[newBusyness[key]]) + "\n")
+	busynessFile.write(str(key) + "\t" + str(newBusyness[key]) + "\n")
 
 busynessFile.close()
 
 speedFile = open("data/speed.tsv","w")
-for key in sarted(speedFile.keys()):
+speedFile.write("Size\tAvgBPS\n")
+for key in sorted(newSpeed.keys()):
 	speedFile.write(str(key) + "\t" + str(newSpeed[key]) + "\n")
 
 speedFile.close()
 
+firstLine = True
 # Start_verifying	File_corrupted	File_name	File_size	Number_files_verified	Total_corrupted_files	Total_time	Time_to_verify
+verifyFile = open("data/verify_log_combined.tsv","r")
+
+for each in verifyFile:
+	if not firstLine:
+		line = each.split()
+		s = int(line[3])
+		t = float(line[7])
+		if s not in verify:
+			verify[s] = {"busyT": t, "num": 1}
+		else:
+			verify[s]["num"] += 1
+			verify[s]["busyT"] += t
+	else:
+		firstLine = False
+
+verifyFile.close()
+newVerify = {}
+for key in verify:
+	newVerify[key] = verify[key]["busyT"] / verify[key]["num"]
+
 #file size vs verification time
 #is growth linear?
 # something for verification too
+verifyTimeFile = open("data/verify.tsv","w")
+verifyTimeFile.write("Size\tTimeToVerify\n")
+for key in sorted(newVerify.keys()):
+	verifyTimeFile.write(str(key) + "\t" + str(newVerify[key]) + "\n")
 
+verifyTimeFile.close()
+print("Initial setup time")
+print("Node 1",initialSetupTime[0])
+print("Node 2",initialSetupTime[1])
+print("Node 3",initialSetupTime[2])
