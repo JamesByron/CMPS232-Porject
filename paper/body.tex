@@ -138,11 +138,11 @@ We configure the simulator to use parameters that reflect the behavior of the Ra
   \label{tab:comp}
   \begin{tabular}{lr|rr|rr}
     \toprule
-    \textbf{Sim. Year}&\textbf{Capacity}&\textbf{Sim. Time}&\textbf{Sim. Power (kwh)}&\textbf{Real Time}&\textbf{Real Power}\\
+    \textbf{Period}&\textbf{Capacity}&\textbf{Sim. Time}&\textbf{Sim. Power (kWh)}&\textbf{Real Time}&\textbf{Real Power}\\
     \midrule
-    1&250 GB&192 min&0.05 kwh&210 min&0.06 kwh\\
-    2&500 GB&518 min&0.14 kwh&600 min&0.19 kwh\\
-    3&1 TB&1170 min&0.32&1435 min&1.1 kwh\\
+    1&250 GB&192 min&0.05 kWh&210 min&0.06 kWh\\
+    2&500 GB&518 min&0.14 kWh&600 min&0.19 kWh\\
+    3&1 TB&1170 min&0.32&1435 min&1.1 kWh\\
   \bottomrule
 \end{tabular}
 \end{minipage}
@@ -151,18 +151,18 @@ We configure the simulator to use parameters that reflect the behavior of the Ra
 
 \begin{figure}[!ht]
 \includegraphics[width=\linewidth]{fig6.eps}
-\caption{Average transfer speed by file size}
+\caption{The file transfer speed incrreases for larger files.  We observed transfer speeds above the maximum speed of the USB interface for files around 20 KB in size.  The peak file transfer speed matches the maximum throughput of the gigabit Ethernet switch.}
 \label{fig6}
 \end{figure}
 
 \begin{figure}[!ht]
 \includegraphics[width=\linewidth]{fig7.eps}
-\caption{Efficiency of File Transfers by Size}
+\caption{We calculate file transfer efficiency by dividing the file transfer time by the total time needed to archive a file.  Efficency increases as the file size grows, thereby illustrating the overhead of negotiating a network connection and creating a file on the storage node.}
 \label{fig7}
 \end{figure}
 
 \begin{figure}[!ht]
 \includegraphics[width=\linewidth]{fig8.eps}
-\caption{Seconds to verify files by file zize}
+\caption{In general, file verification takes longer for larger files.  The results are highly variable for small files, even taking longer for some small files than for larger files.  The y-axis here is logarithmic.}
 \label{fig8}
 \end{figure}
