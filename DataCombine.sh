@@ -21,3 +21,7 @@ rm verify.tsv
 cd ..
 python3 DataProcessing.py
 ./charts.sh
+cd paper
+make clean
+make
+cd ..
