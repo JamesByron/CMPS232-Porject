@@ -52,7 +52,10 @@
 \maketitle
 
 \begin{abstract}
-  Text here
+Archival storage is an important application for today's storage technologies.  Recent advancements in hard disk capacity have made them more cost-competitive with tape for use in archival storage systems.  Yet the power consumption and cost of hard disks complicates their use in archival storage systems.  In previous work, we designed a simulator that predicts the acquisition cost and power consumption of archival storage systems using a variety of storage technologies, including tape and hard disk.  Still, with the results of our simulation showing that hard disks are cost-competitive with tape, the real performance and power consumption of a hard disk-based archival storage system remains unverified.  We also have not measured the effects of coordination and network communication on the viability of a distributed archival system using hard disks.
+
+We present a prototype archival storage system that uses low-power computation devices to store archival data on hard disks and perform verification of the data's correctness without sending the data over the network.  We explain the results of simulation to model the same storage system and show results comparing the time taken and power consumption of our prototype and simulation.  We present results that illustrate the benefits of minimizing communication and coordination between nodes in a distributed archival storage system.  We also describe improvements to our simulation that could improve its predictions concerning power consumption.
+
 \end{abstract}
 
 \input{body}

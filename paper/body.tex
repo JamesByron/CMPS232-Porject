@@ -7,9 +7,7 @@ A recent industry report~\cite{idc1} indicated that the amount of valuable data 
 
 Amazon Glacier~\cite{web6}, a cloud-based storage system for archival data, offers a typical latency of minutes to hours when retrieving customer data.  Its performance, then, matches that of a tape-backed archival system.  Some customers that rely on archival storage systems to store important and valuable data may prefer lower latencies; however, the possibility that HDDs or SSDs may cost more to acquire and use in archival systems hinders the adoption of such low-latency technologies in archival systems.  Low-cost and simple NAS devices may enable hard drives to be more cost-competitive with tape and other archival technologies.
 
-The following sections include related work, a summary of the simulator's design and initial results, the design and implementation of our distributed storage system using simple NAS devices, experimental results and discussion, and a conclusion.
-
-
+The following sections include related work, a summary of the simulator's design and initial results, the design and implementation of our prototype distributed storage system using simple NAS devices, experimental results and discussion, and a conclusion.
 
 \section{Related Work}
 Many storage systems have been designed to meet the needs of large and distributed file systems and databases.  We present here the summary of several that offer similar characteristics to the prototype that we have designed.  We do not say that our prototype as described in later sections should be distinct from those presented here in any aspect since the purpose of our prototype is to verify the results of our simulator and to better understand the issues relating to archival storage simulation.  We leave it to future work to implement a comprehensive distributed storage system that shares some or all of the features of the systems described here.
@@ -50,11 +48,11 @@ We ran simulations to predict the cumulative TCO of an archival storage system o
 
 Earlier we observed that the total cost of ownership for a storage system includes the acquisition cost of the devices needed to meet the archive's requirements for capacity and performance.  The TCO also includes the cost of the libraries or NAS devices needed to connect the storage devices to a network and the cost of the electricity that the archive uses to meet its archival requirements.  In Figure~\ref{fig1}, we present the simulated cost of constructing an archival storage system using archival tape, HDD, and SSD.  The cumulative TCO of each archival system increases as the simulation progresses.  Archival tape offers a low TCO compared with HDD at the outset of the simulation because its drives, tapes, and library systems cost less than the HDDs and NAS devices required to store the same amount of data.  For the HDD-based archival system, the cost of the NAS devices contributes significantly to the archive's TCO.  If the cost of the NAS devices were to be reduced, the TCO for the HDD-based archives would be similar or less than that of tape based archives.
 
-\begin{figure}[!ht]
+\begin{figure*}[!ht]
 \includegraphics[width=\linewidth]{fig1.eps}
-\caption{Caption here}
+\caption{Tape, hard disk, and solid state disk can be used in archival storage systems.  The cost of NAS devices significantly impacts the TCO for HDD-based archives.}
 \label{fig1}
-\end{figure}
+\end{figure*}
 
 \subsection{NAS Node for Distributed Storage}
 Based on the results of our previous simulation work, we proposed a simple, low-power, and low-cost network attached storage device that can connect individual hard drives to a network at a much lower cost than the comparatively high-cost and high-performance NAS solution that we used above~\cite{web35}.  The proposed storage node connects a single SATA hard disk to a network while consuming 10 watts of active power and 1 watt of power while idle.  These specifications are based roughly on the Banana Pi~\cite{web40}, but they could be extended to the functionally similar Raspberry Pi~\cite{web49} or similar device.
@@ -63,7 +61,7 @@ Figure~\ref{fig2} shows the cumulative acquisition cost of the low-cost NAS devi
 
 \begin{figure}[!ht]
 \includegraphics[width=\linewidth]{fig2.eps}
-\caption{Caption here}
+\caption{The cost of NAS devices in archival storage contributes to the total cost of ownership.  Lowering the cost of NAS devices by using a simple and low-cost compute device can help to reduce TCO.}
 \label{fig2}
 \end{figure}
 
@@ -88,7 +86,7 @@ Each server node has sufficient processing power to verify or scrub the files th
 
 \begin{figure}[!ht]
 \includegraphics[width=\linewidth]{fig3.pdf}
-\caption{Caption here}
+\caption{The design of our prototype stores data and checksums on each node.  Communication is performed between the client (master) node and the storage (server) nodes.}
 \label{fig3}
 \end{figure}
 
@@ -102,7 +100,7 @@ We experienced a challenge during the testing of our prototype that implicated t
 
 \begin{figure}[!ht]
 \includegraphics[width=\linewidth]{fig4.pdf}
-\caption{Caption here}
+\caption{Potential communication between nodes can share information about their checksums.}
 \label{fig4}
 \end{figure}
 
@@ -131,6 +129,9 @@ We configure the simulator to use parameters that reflect the behavior of the Ra
 
 \section{Experimental Results}
 
+\subsection{Prototype and Simulation}
+We first compare the results of the power consumption and time taken for our prototype to archive data with the results of our simulation.  Table~\ref{tab:cmp} shows a summary of our findings.  The values for \textit{real time} and \textit{real power} are taken from the prototype archival system, and the \textit{sim power} and \textit{sim time} are taken from the simulation.  We observe that the real time taken and power consumption are both greater than the predictions from the simulator.  The variance is greatest at the end of the simulation, when the power use increases by 0.18 kWh while the prototype increases by 0.79 kmh.  We identify several possible factors that may contribute to the growth of the difference between the prototype and simulated results between the second and third simulation period.
+
 \begin{table*}[!hbt]
 \begin{minipage}{\linewidth}
 \centering
@@ -148,6 +149,14 @@ We configure the simulator to use parameters that reflect the behavior of the Ra
 \end{minipage}
 \end{table*}
 
+Our simulator reports a throughput of 60 MB/second at the end of the simulation.  Each node offers a 20 MB/second bandwidth for its own data, so the report from the simulator is accurate.  Nevertheless, when writing data to the archival system, the total bandwidth never exceeds 20 MB per second because only the newest drive has available capacity to store more data.  Thus the effective throughput of the archival system remains 20 MB per second.  By using the higher value of 40 MB per second of bandwidth when there are two active storage nodes and 60 MB per second when there are three active storage nodes, the simulator predicts that it will take less time to write additional data to the archive.  It also underestimates the time taken to scrub the data on the hard disks, since the smallest hard disk has to read only 250 GB at 20 MB per second while the largest hard drive must read 1 TB at the same speed.  The simulator assumes for the sake of simplicity that the combined speed of the hard drives can be applied to the data stored on each particular drive, thereby underestimating the amount of time required to  write and verify data,.
+
+Our simulator has been designed to regard the behavior of archival storage systems as a whole rather than as individual drives storing individual files.  The results of this experiment suggest that, in order to improve the predictions of the power consumption of an archival system, we should implement a model that tracks the specific capacity and contents of individual storage devices to record how the archive's workload affects them individually.  We may then determine the performance of the archival system as a whole by determining the aggregate behavior of all of its storage devices separately.
+
+An additional factor that likely affects the power consumption of the prototype simulator differently than the simulation is that we do not consider the power consumption of the network switch in our simulation.  We did not expect the network switch to consume a significant amount of power; however, the power consumption of networking may also increase the power consumption of the prototype relative to the simulation in our experiment.
+
+\subsection{File Size and Transfer Speed}
+We measured the transfer speed while storing data into the archival nodes.    Each File transfer begins with an initial packet that sends the file name that the storage node should create to store the archived file.  The node then receives data in 4 KB packets until the end of the file.  We expected that the transfer speed would show an increase with larger files because the time needed read and parse the first packet of data would be distributed over many packets rather than a few.  The average file transfer speed by file size is shown in Figure~\ref{fig6}.  We observe an overall trend that large files promote faster file transfers.  Surprisingly, however, files of moderate size transferred much more quickly than the largest files.  The maximum throughput of the USB interface that each of our HDDs communicates with in roughly 20 MB per second, as observed with the largest file size here.  We saw a maximum throughput of approximately 120 MB per second for files around 20 KB.  120 MB per second is also the maximum bandwidth of the gigabit Ethernet connection that we use in our experiments.
 
 \begin{figure}[!ht]
 \includegraphics[width=\linewidth]{fig6.eps}
@@ -155,14 +164,25 @@ We configure the simulator to use parameters that reflect the behavior of the Ra
 \label{fig6}
 \end{figure}
 
+The high throughput of files that are around 20 KB may be explained as a feature of OS-level caching.  Operating systems like Linux provide some caching for data as user-space applications interact with the file system, so the high throughput for some files may reflect a sweet spot between the efficiency of repeated data transfers and the speedup of OS-level caching for files up to a certain limit in size.  Larger files don't fit in the main memory of the Raspberry Pi, so large files must inevitably be written to disk as the storage node receives them.
+
+\subsection{Communication and File Transfer Time}
+Figure~\ref{fig7} shows the efficiency of file transfers into the archival system by file size.  We expect that larger files will provide greater efficiency than smaller files because the performance cost of establishing a network connection, parsing the first data packet, and creating a new file can be amortized over more data packets without interruption.   A value of 1 represents a high degree of transfer efficiency.  We observe that file transfers become increasingly efficient as the file size increases.  Some files do not fit the dominant curve of efficiency increasing by file size.  There are several possible reasons for such outliers.  When a node reads the first packets of data from a client over the network, it can take several seconds to establish a connection and begin archiving data.  This can, for such cases, result in lower transfer efficiency.  Also, the performance of hard drives can vary in unpredictable ways due to logic that runs internally on the drive itself.  We expect that a combination of these two factors causes variance of the data in Figure~\ref{fig7}.
+
 \begin{figure}[!ht]
 \includegraphics[width=\linewidth]{fig7.eps}
 \caption{We calculate file transfer efficiency by dividing the file transfer time by the total time needed to archive a file.  Efficency increases as the file size grows, thereby illustrating the overhead of negotiating a network connection and creating a file on the storage node.}
 \label{fig7}
 \end{figure}
 
-\begin{figure}[!ht]
+\subsection{Verification Performance}
+We measured the time taken to verify the files in the archival system once they were written onto the storage devices.  In Figure~\ref{fig8}, both axes are logarithmic.  We observe that the time taken to verify a file grows roughly linearly with the size of the files.  As with other experiments, there is some variance with smaller files because the time needed to read a small file may be no smaller than the time needed to read a file that is slightly larger.  Hard drives read blocks of data in chunks of several KB, so small files require the hard drive to read much more data than necessary.  The linear growth of verification time shows the benefit of using low-power compute devices to connect an HDD to a storage network.  The storage node can verify files because it has sufficient computation power, and the data does not need to be transmitted over the network to a different server for verification, thereby reducing the number of data transfers and coordination between storage nodes or servers.
+
+\begin{figure}[!t]
 \includegraphics[width=\linewidth]{fig8.eps}
 \caption{In general, file verification takes longer for larger files.  The results are highly variable for small files, even taking longer for some small files than for larger files.  The y-axis here is logarithmic.}
 \label{fig8}
 \end{figure}
+
+\section{Conclusion}
+We have presented the design and implementation of a prototype distributed archival storage system that implements the simple storage node that we model with our archival simulator.  We found that the energy consumption in our prototype exceeds the energy consumption that we predicted in our simulator.  We describe several factors that contribute to the difference.  We also described the cost of network coordination and overhead for the nodes in our prototype storage system.  We found that communication and coordination between a client and a server significantly affects the total performance of the storage system.  We defined several areas for future work that could improve both our prototype and the simulation model.
